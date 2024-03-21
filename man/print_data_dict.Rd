@@ -24,6 +24,6 @@ Adapted from the data_dict_md function from the explore package.
 Source: https://rdrr.io/cran/explore/src/R/tools.R
 }
 \examples{
-descriptions = print_descriptions_df(mtcars)
+descriptions = descriptions_df(mtcars)
 print_data_dict(mtcars, title = "Cars", descriptions = descriptions)
 }
