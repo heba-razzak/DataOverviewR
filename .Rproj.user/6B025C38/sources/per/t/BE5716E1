@@ -1,0 +1,26 @@
+{
+    "id": "BE5716E1",
+    "path": "~/Documents/GitHub/lim-lab/createDataDict/R/createDataDict.R",
+    "project_path": "R/createDataDict.R",
+    "type": "r_source",
+    "hash": "978409142",
+    "contents": "",
+    "dirty": false,
+    "created": 1710796021532.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "122,0",
+        "scrollLine": "92"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1710800979,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1710800979621,
+    "read_only": false,
+    "read_only_alternatives": []
+}
