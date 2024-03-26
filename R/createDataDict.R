@@ -127,9 +127,9 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
   dict_table <- data.frame(
     "Variable" = variables,
     "Type" = types,
-    "NA" = format(nas, big.mark = ",", scientific = FALSE),
+    "NA" = nas,
     `%NA` = nas_pct,
-    "Unique" = format(unique_vals, big.mark = ",", scientific = FALSE),
+    "Unique" = unique_vals,
     check.names = FALSE
   )
 
@@ -146,33 +146,30 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
     dict_table$Description <- ""
   }
 
-  # # Convert data dict table to markdown
-  # md_dict <- knitr::kable(dict_table, format = "markdown")
-  # md_dict <- paste(md_dict, collapse = "\n")
-  #
-  #########################
-  # Construct Output Text #
-  #########################
+  ####################
+  # Construct Output #
+  ####################
 
-  # Initialize txt
-  txt <- ""
-
-  # data_title
-  if (!missing(data_title))  {
-    txt <- paste0(txt, "## **", data_title, "**", "  \n")
-  } else {
-    # if there is no data_title use dataframe name
+  # if data_title is missing use dataframe name
+  if (missing(data_title))  {
     data_title <- deparse(substitute(data))
-    txt <- paste0(txt, "## **", data_title, "**", "  \n")
   }
-  #
-  # # Number of rows
-  # txt <- paste0(txt, "**Number of Rows**: `", format(num_rows, big.mark = ",", scientific = FALSE), "`\n\n")
-  #
-  # # Markdown table
-  # txt <- paste0(txt, md_dict, "\n\n")
-  #
-  # Print the output
-  cat(txt)
-  knitr::kable(dict_table, format = "markdown")
+
+  # create table that shows table name and number of rows
+  rows_text = paste0("Number of rows: ", format(num_rows,
+                                                big.mark = ",",
+                                                scientific = F))
+  df <- data.frame(tablename=rows_text)
+  names(df) <- data_title
+
+  # Print Table name & Number of Rows
+  knitr::kable(df)
+
+  # Print Data Dictionary
+  knitr::kable(dict_table,
+               align = "llrrrl",
+               row.names = FALSE,
+               format = "markdown",
+               format.args = list(big.mark = ",",
+                                  scientific = FALSE)
 }
