@@ -167,10 +167,10 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
                format = "markdown")
 
   # Print Data Dictionary
-  knitr::kable(dict_table,
-               align = "llrrrl",
-               row.names = FALSE,
-               format = "markdown",
-               format.args = list(big.mark = ",",
-                                  scientific = FALSE))
+  # knitr::kable(dict_table,
+  #              align = "llrrrl",
+  #              row.names = FALSE,
+  #              format = "markdown",
+  #              format.args = list(big.mark = ",",
+  #                                 scientific = FALSE))
 }
