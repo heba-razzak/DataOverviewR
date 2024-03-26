@@ -155,31 +155,23 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
     data_title <- deparse(substitute(data))
   }
 
+  data_title <- paste0("## **",data_title,"**\n")
+
   # create table that shows table name and number of rows
-  rows_text = paste0("Number of rows: ", format(num_rows,
+  rows_text = paste0("**Number of rows:** `", format(num_rows,
                                                 big.mark = ",",
-                                                scientific = F))
-  df <- data.frame(tablename=rows_text)
-  names(df) <- data_title
+                                                scientific = F),"`\n")
 
   # Print Table name & Number of Rows
-  print(knitr::kable(df,format = "markdown"))
+  knitr::knit_print(knitr::asis_output(data_title))
+  knitr::knit_print(knitr::asis_output(rows_text))
+
   # Print Data Dictionary
-  print(knitr::kable(dict_table,
+  knitr::kable(dict_table,
                      align = "llrrrl",
                      row.names = FALSE,
                      format = "markdown",
                      format.args = list(big.mark = ",",
-                                        scientific = FALSE)))
+                                        scientific = FALSE))
 
-
-  # knitr::kables(list(knitr::kable(df,
-  #                            format = "markdown"),
-  #               knitr::kable(dict_table,
-  #                            align = "llrrrl",
-  #                            row.names = FALSE,
-  #                            format = "markdown",
-  #                            format.args = list(big.mark = ",",
-  #                                               scientific = FALSE))
-  #               ))
 }
