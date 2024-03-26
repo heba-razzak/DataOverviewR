@@ -17,7 +17,7 @@ library(createDataDict)
 ## Example
 
 ``` r
-descriptions = descriptions_df(airquality)
+descriptions <- descriptions_df(airquality)
 
 descriptions <- update_description(descriptions,
                                    c("Ozone",
