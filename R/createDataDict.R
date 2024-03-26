@@ -1,39 +1,3 @@
-#' Print Skeleton for Variable Descriptions
-#'
-#' Generates a skeleton code to create a dataframe containing variable names
-#' and their corresponding descriptions.
-#' It is designed to simplify the process of creating input for
-#' \code{\link{print_data_dict}} function by providing a template for describing
-#' variables in a dataset.
-#'
-#' @param data The dataset for which the data dictionary is to be printed.
-#'
-#' @return None
-#' @export
-#'
-#' @examples
-#' print_descriptions_df(mtcars)
-print_descriptions_df <- function(data) {
-  # Get variable names
-  variables <- names(data)
-
-  # Initialize vectors to store variable names and descriptions
-  variables_txt <- paste0("'", variables, "'", collapse =
-                            ",\n                                       ")
-  desc_txt <- paste0("'", variables, "_description'", collapse =
-                       ",\n                                         ")
-
-  # Construct Output Text
-  txt1 <- "descriptions = data.frame(Variable = c("
-  txt2 <- "),\n                          Description = c("
-  txt3 <- "))\n\n"
-
-  txt <- paste0(txt1, variables_txt, txt2, desc_txt, txt3)
-
-  # Print the output
-  knitr::asis_output(txt)
-}
-
 #' Generate Dataframe Skeleton for Variable Descriptions
 #'
 #' Generates a dataframe that can be used as the descriptions argument

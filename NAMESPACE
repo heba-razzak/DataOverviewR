@@ -2,5 +2,4 @@
 
 export(descriptions_df)
 export(print_data_dict)
-export(print_descriptions_df)
 export(update_description)
