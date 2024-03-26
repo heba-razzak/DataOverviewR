@@ -31,7 +31,7 @@ print_descriptions_df <- function(data) {
   txt <- paste0(txt1, variables_txt, txt2, desc_txt, txt3)
 
   # Print the output
-  cat(txt)
+  knitr::asis_output(txt)
 }
 
 #' Generate Dataframe Skeleton for Variable Descriptions
@@ -150,18 +150,21 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
   # Construct Output #
   ####################
 
+  # Title for data dictionary
+
   # if data_title is missing use dataframe name
   if (missing(data_title))  {
     data_title <- deparse(substitute(data))
   }
-
+  # Format for markdown
   data_title <- paste0("## **",data_title,"**\n")
 
-  # create table that shows table name and number of rows
+  # Number of rows
   rows_text = paste0("**Number of rows:** `", format(num_rows,
                                                 big.mark = ",",
                                                 scientific = F),"`\n\n")
 
+  # Data dictionary in markdown format
   md_dict <- knitr::kable(dict_table,
                            align = "llrrrl",
                            row.names = FALSE,
@@ -171,22 +174,9 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
 
   md_dict <- paste(md_dict, collapse = "\n")
 
-  # # Print Table name & Number of Rows
-  # knitr::asis_output(data_title)
-  # knitr::asis_output(rows_text)
-
-  # # Print Data Dictionary
-  # knitr::kable(dict_table,
-  #                    align = "llrrrl",
-  #                    row.names = FALSE,
-  #                    format = "markdown",
-  #                    format.args = list(big.mark = ",",
-  #                                       scientific = FALSE))
-
   # Combine all components into a single string
   output <- paste0(data_title, rows_text, md_dict)
 
-  # Print the combined output
+  # Print the combined output as is in markdown format
   knitr::asis_output(output)
-
 }
