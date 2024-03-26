@@ -163,8 +163,9 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
   names(df) <- data_title
 
   # Print Table name & Number of Rows
-  knitr::kable(df)
-  print(df)
+  knitr::kable(df,
+               format = "markdown",)
+
   # Print Data Dictionary
   knitr::kable(dict_table,
                align = "llrrrl",
