@@ -4,12 +4,12 @@
 \alias{print_data_dict}
 \title{Print Data Dictionary}
 \usage{
-print_data_dict(data, title = "", descriptions = NULL)
+print_data_dict(data, data_title = "", descriptions = NULL)
 }
 \arguments{
 \item{data}{The dataset for which the data dictionary is to be printed.}
 
-\item{title}{The title for the data dictionary (optional).}
+\item{data_title}{The title for the data dictionary (optional).}
 
 \item{descriptions}{A data frame providing detailed descriptions for
 variables (optional).}
@@ -25,5 +25,5 @@ Source: https://rdrr.io/cran/explore/src/R/tools.R
 }
 \examples{
 descriptions = descriptions_df(mtcars)
-print_data_dict(mtcars, title = "Cars", descriptions = descriptions)
+print_data_dict(mtcars, data_title = "Cars", descriptions = descriptions)
 }

@@ -55,9 +55,34 @@ descriptions_df <- function(data) {
   # Get variable names
   variables <- names(data)
   descriptions = data.frame(Variable = names(data),
-                            Description = paste0(variables, "_description"))
+                            Description = "")
 
   # Return descriptions dataframe
+  return(descriptions)
+}
+
+
+#' Update Descriptions for Variables
+#'
+#' @param descriptions A dataframe containing variable descriptions.
+#' @param variable The name of the variable for which the description is to be updated.
+#' @param description The new description for the variable.
+#'
+#' @return The updated descriptions dataframe.
+#' @export
+#'
+#' @examples
+#' descriptions <- update_description(descriptions,
+#'                                    "osm_id",
+#'                                    "Unique Identifier from OpenStreetMap")
+#' descriptions <- update_description(descriptions,
+#'                                    c("osm_id", "name"),
+#'                                    c("Unique Identifier from OpenStreetMap",
+#'                                      "Name of the entity"))
+update_description <- function(descriptions, variable, description) {
+  for (i in seq_along(variable)) {
+      descriptions$Description[descriptions$Variable == variable[i]] <- description[i]
+    }
   return(descriptions)
 }
 
@@ -69,7 +94,7 @@ descriptions_df <- function(data) {
 #' Source: https://rdrr.io/cran/explore/src/R/tools.R
 #'
 #' @param data The dataset for which the data dictionary is to be printed.
-#' @param title The title for the data dictionary (optional).
+#' @param data_title The title for the data dictionary (optional).
 #' @param descriptions A data frame providing detailed descriptions for
 #' variables (optional).
 #'
@@ -78,8 +103,8 @@ descriptions_df <- function(data) {
 #'
 #' @examples
 #' descriptions = descriptions_df(mtcars)
-#' print_data_dict(mtcars, title = "Cars", descriptions = descriptions)
-print_data_dict <- function(data, title = "", descriptions = NULL) {
+#' print_data_dict(mtcars, data_title = "Cars", descriptions = descriptions)
+print_data_dict <- function(data, data_title = "", descriptions = NULL) {
   # Load packages
   suppressPackageStartupMessages({
     if (!require("dplyr")) {
@@ -95,16 +120,16 @@ print_data_dict <- function(data, title = "", descriptions = NULL) {
   variables <- names(data)
   types <- sapply(data, function(x) class(x)[1])
   nas <- colSums(is.na(data))
-  nas_pct <- round(nas / num_rows * 100, 1)
+  nas_pct <- sprintf("%.2f%%", (round(nas / num_rows * 100, 2)))
   unique_vals <- sapply(data, function(x) length(unique(x)))
 
   # Create the data dictionary table
   dict_table <- data.frame(
     "Variable" = variables,
     "Type" = types,
-    "NA" = nas,
+    "NA" = format(nas, big.mark = ",", scientific = FALSE),
     `%NA` = nas_pct,
-    "Unique" = unique_vals,
+    "Unique" = format(unique_vals, big.mark = ",", scientific = FALSE),
     check.names = FALSE
   )
 
@@ -121,32 +146,34 @@ print_data_dict <- function(data, title = "", descriptions = NULL) {
     dict_table$Description <- ""
   }
 
-  # Convert data dict table to markdown
-  md_dict <- knitr::kable(dict_table, format = "markdown")
-  md_dict <- paste(md_dict, collapse = "\n")
+  knitr::kable(dict_table, format = "markdown")
 
-  #########################
-  # Construct Output Text #
-  #########################
-
-  # Initialize txt
-  txt <- ""
-
-  # Title
-  if (!missing(title))  {
-    txt <- paste0(txt, "## **", title, "**", "  \n")
-  } else {
-    # if there is no title use dataframe name
-    title <- deparse(substitute(data))
-    txt <- paste0(txt, "## **", title, "**", "  \n")
-  }
-
-  # Number of rows
-  txt <- paste0(txt, "**Number of Rows**: `", num_rows, "`\n\n")
-
-  # Markdown table
-  txt <- paste0(txt, md_dict, "\n\n")
-
-  # Print the output
-  cat(txt)
+  # # Convert data dict table to markdown
+  # md_dict <- knitr::kable(dict_table, format = "markdown")
+  # md_dict <- paste(md_dict, collapse = "\n")
+  #
+  # #########################
+  # # Construct Output Text #
+  # #########################
+  #
+  # # Initialize txt
+  # txt <- ""
+  #
+  # # data_title
+  # if (!missing(data_title))  {
+  #   txt <- paste0(txt, "## **", data_title, "**", "  \n")
+  # } else {
+  #   # if there is no data_title use dataframe name
+  #   data_title <- deparse(substitute(data))
+  #   txt <- paste0(txt, "## **", data_title, "**", "  \n")
+  # }
+  #
+  # # Number of rows
+  # txt <- paste0(txt, "**Number of Rows**: `", format(num_rows, big.mark = ",", scientific = FALSE), "`\n\n")
+  #
+  # # Markdown table
+  # txt <- paste0(txt, md_dict, "\n\n")
+  #
+  # # Print the output
+  # cat(txt)
 }
