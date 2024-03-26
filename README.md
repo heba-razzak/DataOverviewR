@@ -17,72 +17,26 @@ library(createDataDict)
 ## Example
 
 ``` r
-print_descriptions_df(mtcars)
+descriptions = descriptions_df(airquality)
+
+descriptions <- update_description(descriptions,
+                                   c("Ozone",
+                                     "Solar.R"),
+                                   c("numeric   Ozone (ppb)",
+                                     "numeric   Solar R (lang)"))
+
+print_data_dict(airquality, data_title = "Air Quality", descriptions = descriptions)
 ```
 
-    ## descriptions = data.frame(Variable = c('mpg',
-    ##                                        'cyl',
-    ##                                        'disp',
-    ##                                        'hp',
-    ##                                        'drat',
-    ##                                        'wt',
-    ##                                        'qsec',
-    ##                                        'vs',
-    ##                                        'am',
-    ##                                        'gear',
-    ##                                        'carb'),
-    ##                           Description = c('mpg_description',
-    ##                                          'cyl_description',
-    ##                                          'disp_description',
-    ##                                          'hp_description',
-    ##                                          'drat_description',
-    ##                                          'wt_description',
-    ##                                          'qsec_description',
-    ##                                          'vs_description',
-    ##                                          'am_description',
-    ##                                          'gear_description',
-    ##                                          'carb_description'))
+## **Air Quality**
 
-``` r
-# using output from previous function, create descriptions data frame
-descriptions = data.frame(Variable = c('mpg',
-                                       'cyl',
-                                       'disp',
-                                       'hp',
-                                       'drat',
-                                       'wt',
-                                       'qsec',
-                                       'vs',
-                                       'am',
-                                       'gear',
-                                       'carb'),
-                          Description = c('mpg_description',
-                                         'cyl_description',
-                                         'disp_description',
-                                         'hp_description',
-                                         'drat_description',
-                                         'wt_description',
-                                         'qsec_description',
-                                         'vs_description',
-                                         'am_description',
-                                         'gear_description',
-                                         'carb_description'))
-print_data_dict(mtcars, title = "Cars", descriptions = descriptions)
-```
+**Number of rows:** `153`
 
-    ## ## **Cars**  
-    ## **Number of Rows**: `32`
-    ## 
-    ## |Variable |Type    | NA| %NA| Unique|Description      |
-    ## |:--------|:-------|--:|---:|------:|:----------------|
-    ## |mpg      |numeric |  0|   0|     25|mpg_description  |
-    ## |cyl      |numeric |  0|   0|      3|cyl_description  |
-    ## |disp     |numeric |  0|   0|     27|disp_description |
-    ## |hp       |numeric |  0|   0|     22|hp_description   |
-    ## |drat     |numeric |  0|   0|     22|drat_description |
-    ## |wt       |numeric |  0|   0|     29|wt_description   |
-    ## |qsec     |numeric |  0|   0|     30|qsec_description |
-    ## |vs       |numeric |  0|   0|      2|vs_description   |
-    ## |am       |numeric |  0|   0|      2|am_description   |
-    ## |gear     |numeric |  0|   0|      3|gear_description |
-    ## |carb     |numeric |  0|   0|      6|carb_description |
+| Variable | Type    |  NA |    %NA | Unique | Description            |
+|:---------|:--------|----:|-------:|-------:|:-----------------------|
+| Ozone    | integer |  37 | 24.18% |     68 | numeric Ozone (ppb)    |
+| Solar.R  | integer |   7 |  4.58% |    118 | numeric Solar R (lang) |
+| Wind     | numeric |   0 |  0.00% |     31 |                        |
+| Temp     | integer |   0 |  0.00% |     40 |                        |
+| Month    | integer |   0 |  0.00% |      5 |                        |
+| Day      | integer |   0 |  0.00% |     31 |                        |
