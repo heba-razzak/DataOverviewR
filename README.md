@@ -10,7 +10,7 @@ You can install the development version of createDataDict from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("heba-razzak/lim-lab/createDataDict")
+devtools::install_github("heba-razzak/createDataDict")
 library(createDataDict)
 ```
 
