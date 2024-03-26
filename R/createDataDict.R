@@ -171,5 +171,5 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
                row.names = FALSE,
                format = "markdown",
                format.args = list(big.mark = ",",
-                                  scientific = FALSE)
+                                  scientific = FALSE))
 }
