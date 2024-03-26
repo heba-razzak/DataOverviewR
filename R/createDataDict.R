@@ -146,27 +146,25 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
     dict_table$Description <- ""
   }
 
-  knitr::kable(dict_table, format = "markdown")
-
   # # Convert data dict table to markdown
   # md_dict <- knitr::kable(dict_table, format = "markdown")
   # md_dict <- paste(md_dict, collapse = "\n")
   #
-  # #########################
-  # # Construct Output Text #
-  # #########################
-  #
-  # # Initialize txt
-  # txt <- ""
-  #
-  # # data_title
-  # if (!missing(data_title))  {
-  #   txt <- paste0(txt, "## **", data_title, "**", "  \n")
-  # } else {
-  #   # if there is no data_title use dataframe name
-  #   data_title <- deparse(substitute(data))
-  #   txt <- paste0(txt, "## **", data_title, "**", "  \n")
-  # }
+  #########################
+  # Construct Output Text #
+  #########################
+
+  # Initialize txt
+  txt <- ""
+
+  # data_title
+  if (!missing(data_title))  {
+    txt <- paste0(txt, "## **", data_title, "**", "  \n")
+  } else {
+    # if there is no data_title use dataframe name
+    data_title <- deparse(substitute(data))
+    txt <- paste0(txt, "## **", data_title, "**", "  \n")
+  }
   #
   # # Number of rows
   # txt <- paste0(txt, "**Number of Rows**: `", format(num_rows, big.mark = ",", scientific = FALSE), "`\n\n")
@@ -174,6 +172,7 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
   # # Markdown table
   # txt <- paste0(txt, md_dict, "\n\n")
   #
-  # # Print the output
-  # cat(txt)
+  # Print the output
+  cat(txt)
+  knitr::kable(dict_table, format = "markdown")
 }
