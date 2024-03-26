@@ -162,6 +162,15 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
                                                 big.mark = ",",
                                                 scientific = F),"`\n\n")
 
+  md_dict <- knitr::kable(dict_table,
+                           align = "llrrrl",
+                           row.names = FALSE,
+                           format = "markdown",
+                           format.args = list(big.mark = ",",
+                                              scientific = FALSE))
+
+  md_dict <- paste(md_dict, collapse = "\n")
+
   # # Print Table name & Number of Rows
   # knitr::asis_output(data_title)
   # knitr::asis_output(rows_text)
@@ -175,14 +184,7 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
   #                                       scientific = FALSE))
 
   # Combine all components into a single string
-  output <- paste(data_title, rows_text,
-                  knitr::kable(dict_table,
-                               align = "llrrrl",
-                               row.names = FALSE,
-                               format = "markdown",
-                               format.args = list(big.mark = ",",
-                                                  scientific = FALSE)),
-                  collapse = "\n")
+  output <- paste0(data_title, rows_text, md_dict)
 
   # Print the combined output
   knitr::asis_output(output)
