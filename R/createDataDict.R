@@ -163,8 +163,8 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
                                                 scientific = F),"`\n")
 
   # Print Table name & Number of Rows
-  knitr::knit_print(knitr::asis_output(data_title))
-  knitr::knit_print(knitr::asis_output(rows_text))
+  knitr::asis_output(data_title)
+  knitr::asis_output(rows_text)
 
   # Print Data Dictionary
   knitr::kable(dict_table,
