@@ -160,18 +160,31 @@ print_data_dict <- function(data, data_title = "", descriptions = NULL) {
   # create table that shows table name and number of rows
   rows_text = paste0("**Number of rows:** `", format(num_rows,
                                                 big.mark = ",",
-                                                scientific = F),"`\n")
+                                                scientific = F),"`\n\n")
 
-  # Print Table name & Number of Rows
-  knitr::asis_output(data_title)
-  knitr::asis_output(rows_text)
+  # # Print Table name & Number of Rows
+  # knitr::asis_output(data_title)
+  # knitr::asis_output(rows_text)
 
-  # Print Data Dictionary
-  knitr::kable(dict_table,
-                     align = "llrrrl",
-                     row.names = FALSE,
-                     format = "markdown",
-                     format.args = list(big.mark = ",",
-                                        scientific = FALSE))
+  # # Print Data Dictionary
+  # knitr::kable(dict_table,
+  #                    align = "llrrrl",
+  #                    row.names = FALSE,
+  #                    format = "markdown",
+  #                    format.args = list(big.mark = ",",
+  #                                       scientific = FALSE))
+
+  # Combine all components into a single string
+  output <- paste(data_title, rows_text,
+                  knitr::kable(dict_table,
+                               align = "llrrrl",
+                               row.names = FALSE,
+                               format = "markdown",
+                               format.args = list(big.mark = ",",
+                                                  scientific = FALSE)),
+                  collapse = "\n")
+
+  # Print the combined output
+  knitr::asis_output(output)
 
 }
