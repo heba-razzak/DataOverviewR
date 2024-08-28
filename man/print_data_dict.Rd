@@ -4,7 +4,7 @@
 \alias{print_data_dict}
 \title{Print Data Dictionary}
 \usage{
-print_data_dict(data, data_title = "", descriptions = NULL)
+print_data_dict(data, data_title = "", descriptions = NULL, show_na = TRUE)
 }
 \arguments{
 \item{data}{The dataset for which the data dictionary is to be printed.}
@@ -13,6 +13,8 @@ print_data_dict(data, data_title = "", descriptions = NULL)
 
 \item{descriptions}{A data frame providing detailed descriptions for
 variables (optional).}
+
+\item{show_na}{Logical value indicating whether to show the NA and %NA columns (default: TRUE).}
 }
 \value{
 None
