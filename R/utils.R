@@ -1,7 +1,12 @@
-#' Create Histogram
+#' Create Text Histogram
 #'
+#' @importFrom graphics hist
 #' @noRd
 #' @export
+#'
+#' @examples
+#' create_hist(iris$Sepal.Length)
+#' cat(create_hist(iris$Sepal.Length))
 create_hist <- function(data) {
   # Remove missing/infinite values from data
   data <- data[!is.na(data) & is.finite(data)]
@@ -12,34 +17,31 @@ create_hist <- function(data) {
     return("")
   }
 
-  # Determine the number of breaks for the histogram (between 1 and 10)
-  n_breaks <- pmax(1, pmin(nclass.Sturges(data), 10))
+  # Use default histogram bins
+  hist_data <- hist(data, plot = FALSE)
+  breaks <- hist_data$breaks
+  n_breaks <- length(breaks) - 1
+  counts <- hist_data$counts
 
-  # Round break values if bin width > 1
-  if ((diff(range(data)/n_breaks)) < 1) {
-    breaks <- seq(min(data), max(data), length.out = n_breaks+1)
-  } else {
-    breaks <- round(seq(floor(min(data)), ceiling(max(data)), length.out = n_breaks+1))
-  }
-
-  # Get histogram counts
+  # Scale histogram counts
   hist_height <- 10
-  counts <- hist(data, breaks = breaks, plot = FALSE)$counts
-  counts <- round(counts / max(counts) * hist_height)
+  counts_scaled <- round(counts / max(counts) * hist_height)
 
-  # Create histogram representation
+  # Create histogram text representation
   hist_output <- ""
   for (i in 1:(hist_height/2)) {
     row_output <- ""
     for (c in 1:n_breaks) {
-      symbol <- ifelse(counts[c] < (2*i)-1," ",ifelse(counts[c] < 2*i,".",":"))
+      symbol <- ifelse(counts_scaled[c] < (2*i)-1," ",ifelse(counts_scaled[c] < 2*i,".",":"))
       row_output <- paste0(row_output, symbol)
     }
     hist_output <- paste0(row_output, "\n", hist_output)
   }
   return(hist_output)
-  # # Run the txthist function on the example data
-  # data <- rnorm(100, mean = 50, sd = 10)
-  # txthist(data)
-  # cat(txthist(data))
+
+  # # Print histograms for each variable
+  # for (i in 1:nrow(histogram_df)) {
+  #   cat(histogram_df$variable[i], "\n")
+  #   cat(histogram_df$histogram[i], "\n\n")
+  # }
 }
