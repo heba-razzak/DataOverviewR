@@ -4,16 +4,16 @@
 \alias{data_summary}
 \title{data_summary}
 \usage{
-data_summary(data, var_types = NULL, include_stats = NULL, data_title = NULL)
+data_summary(data, data_title = NULL, var_types = NULL, include_stats = NULL)
 }
 \arguments{
 \item{data}{A dataframe containing the variables for which summary statistics will be generated.}
 
+\item{data_title}{A title for the dataset. If not provided it will be empty.}
+
 \item{var_types}{A named list of variable types. If not provided, all types will be used.}
 
 \item{include_stats}{A list of statistics to include for each variable type (e.g., mean, median, sd). If not provided, default summary statistics will be computed based on the variable type.}
-
-\item{data_title}{A title for the dataset. If not provided it will be empty.}
 }
 \value{
 A dataframe or printed output summarizing the statistics for each variable, depending on the variable type.

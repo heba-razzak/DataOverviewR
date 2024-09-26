@@ -25,7 +25,7 @@
 #' summary_stats <- data_summary(iris, var_types = var_types, include_stats = include_stats, data_title = "Iris Summary")
 #' print(summary_stats)
 #'
-data_summary <- function(data, var_types = NULL, include_stats = NULL, data_title = NULL) {
+data_summary <- function(data, data_title = NULL, var_types = NULL, include_stats = NULL) {
   # If no title is provided use dataframe name
   if (is.null(data_title)) {
     data_title <- deparse(substitute(data))
@@ -36,7 +36,7 @@ data_summary <- function(data, var_types = NULL, include_stats = NULL, data_titl
 
   # Define default included statistics for each column type
   default_include_stats <- list(
-    numeric = c("mean", "sd", "p0", "p25", "median", "p75", "p100", "mode", "hist"),
+    numeric = c("mean", "sd", "min", "p25", "median", "p75", "max", "mode", "hist"),
     character = c("n_unique", "top_counts", "min_char", "max_char"),
     factor = c("levels", "n_unique", "top_counts"),
     posixct = c("min", "max", "median", "n_unique"),
@@ -51,26 +51,28 @@ data_summary <- function(data, var_types = NULL, include_stats = NULL, data_titl
     include_stats <- modifyList(default_include_stats, include_stats)
   }
 
-  # Classify variables if var_types is not fully provided
+  # Classify variables if var_types is provided
   if (!is.null(var_types)) {
-    all_var_names <- unlist(var_types)
-    remaining_vars <- setdiff(names(data), all_var_names)
+    exception_vars <- names(var_types)
+    default_vars <- setdiff(names(data), exception_vars)
 
-    # Classify remaining variables
-    auto_classified_vars <- list(
-      numeric = remaining_vars[sapply(data[remaining_vars], is.numeric)],
-      character = remaining_vars[sapply(data[remaining_vars], is.character)],
-      factor = remaining_vars[sapply(data[remaining_vars], is.factor)],
-      posixct = remaining_vars[sapply(data[remaining_vars], inherits, "POSIXct")],
-      logical = remaining_vars[sapply(data[remaining_vars], is.logical)],
-      date = remaining_vars[sapply(data[remaining_vars], inherits, "Date")]
+    # Classify default variables first
+    generated_types <- list(
+      numeric = default_vars[sapply(data[default_vars], is.numeric)],
+      character = default_vars[sapply(data[default_vars], is.character)],
+      factor = default_vars[sapply(data[default_vars], is.factor)],
+      posixct = default_vars[sapply(data[default_vars], inherits, "POSIXct")],
+      logical = default_vars[sapply(data[default_vars], is.logical)],
+      date = default_vars[sapply(data[default_vars], inherits, "Date")]
     )
 
-    # Merge user-provided var_types with auto classified variable types
-    var_types <- modifyList(auto_classified_vars, var_types)
+    # Classify others
+    for (v in exception_vars) {
+      generated_types[[var_types[[v]]]] <- c(generated_types[[var_types[[v]]]], v)
+    }
   } else {
     # Classify all variables if var_types is not provided
-    var_types <- list(
+    generated_types <- list(
       numeric = names(data)[sapply(data, is.numeric)],
       character = names(data)[sapply(data, is.character)],
       posixct = names(data)[sapply(data, inherits, "POSIXct")],
@@ -84,35 +86,36 @@ data_summary <- function(data, var_types = NULL, include_stats = NULL, data_titl
   result <- list()
   hist_list <- list()
   # Numeric
-  if (!is.null(var_types$numeric)) {
-    numeric_stats <- lapply(var_types$numeric, function(var) {
+  if (!is.null(generated_types$numeric)) {
+    numeric_stats <- lapply(generated_types$numeric, function(var) {
       x <- data[[var]]
       stats <- list(variable = var)
       if ("mean" %in% include_stats$numeric) stats$mean <- mean(x, na.rm = TRUE)
       if ("sd" %in% include_stats$numeric) stats$sd <- sd(x, na.rm = TRUE)
-      if ("min" %in% include_stats$numeric) stats$p0 <- min(x, na.rm = TRUE)
+      if ("min" %in% include_stats$numeric) stats$min <- min(x, na.rm = TRUE)
       if ("p25" %in% include_stats$numeric) stats$p25 <- quantile(x, 0.25, na.rm = TRUE)
       if ("median" %in% include_stats$numeric) stats$median <- median(x, na.rm = TRUE)
       if ("p75" %in% include_stats$numeric) stats$p75 <- quantile(x, 0.75, na.rm = TRUE)
-      if ("max" %in% include_stats$numeric) stats$p100 <- max(x, na.rm = TRUE)
+      if ("max" %in% include_stats$numeric) stats$max <- max(x, na.rm = TRUE)
       return(as.data.frame(stats, stringsAsFactors = FALSE, row.names = NULL))
     })
     result$numeric <- do.call(rbind, numeric_stats)
 
-    # Histogram
-    if ("hist" %in% include_stats$numeric) {
-      histogram_df <- data.frame(
-        variable = var_types$numeric,
-        histogram = sapply(var_types$numeric, function(var) {
-          create_hist(data[[var]])
-        }), stringsAsFactors = FALSE, row.names = NULL)
-    }
+    # # Histogram
+    # if ("hist" %in% include_stats$numeric) {
+    #   histogram_df <- data.frame(
+    #     variable = generated_types$numeric,
+    #     histogram = sapply(generated_types$numeric, function(var) {
+    #       create_hist(data[[var]])
+    #     }), stringsAsFactors = FALSE, row.names = NULL)
+    # }
   }
 
   # Character
-  if (!is.null(var_types$character)) {
-    character_stats <- lapply(var_types$character, function(var) {
+  if (!is.null(generated_types$character)) {
+    character_stats <- lapply(generated_types$character, function(var) {
       x <- data[[var]]
+      x <- as.character(x)
       stats <- list(variable = var)
       if ("n_unique" %in% include_stats$character) stats$n_unique <- length(unique(x))
       if ("min_char" %in% include_stats$character) stats$min_char <- min(nchar(x), na.rm = TRUE)
@@ -128,8 +131,8 @@ data_summary <- function(data, var_types = NULL, include_stats = NULL, data_titl
   }
 
   # Factor
-  if (!is.null(var_types$factor)) {
-    factor_stats <- lapply(var_types$factor, function(var) {
+  if (!is.null(generated_types$factor)) {
+    factor_stats <- lapply(generated_types$factor, function(var) {
       x <- data[[var]]
       stats <- list(variable = var)
       if ("levels" %in% include_stats$factor) stats$levels <- paste(levels(x), collapse = ", ")
@@ -147,8 +150,8 @@ data_summary <- function(data, var_types = NULL, include_stats = NULL, data_titl
   }
 
   # Logical
-  if (!is.null(var_types$logical)) {
-    logical_stats <- lapply(var_types$logical, function(var) {
+  if (!is.null(generated_types$logical)) {
+    logical_stats <- lapply(generated_types$logical, function(var) {
       x <- data[[var]]
       stats <- list(
         variable = var
@@ -164,8 +167,8 @@ data_summary <- function(data, var_types = NULL, include_stats = NULL, data_titl
   }
 
   # POSIXct
-  if (!is.null(var_types$posixct)) {
-    posixct_stats <- lapply(var_types$posixct, function(var) {
+  if (!is.null(generated_types$posixct)) {
+    posixct_stats <- lapply(generated_types$posixct, function(var) {
       x <- data[[var]]
       stats <- list(variable = var)
       if ("min" %in% include_stats$posixct) stats$min <- min(x, na.rm = TRUE)
@@ -178,9 +181,10 @@ data_summary <- function(data, var_types = NULL, include_stats = NULL, data_titl
   }
 
   # Date
-  if (!is.null(var_types$date)) {
-    date_stats <- lapply(var_types$date, function(var) {
+  if (!is.null(generated_types$date)) {
+    date_stats <- lapply(generated_types$date, function(var) {
       x <- data[[var]]
+      x <- x <- as.Date(x)
       stats <- list(variable = var)
       if ("min" %in% include_stats$date) stats$min <- min(x, na.rm = TRUE)
       if ("max" %in% include_stats$date) stats$max <- max(x, na.rm = TRUE)

@@ -8,7 +8,7 @@
 #' @param data_title A title for the data dictionary.
 #' @param descriptions A dataframe containing descriptions of the variables. It should have at least two columns: "Variable" and "Description".
 #' @param show_na Logical; whether to display NA counts and percentages in the data dictionary. Default is `TRUE`.
-#' @param top_n Integer; the number of top unique values to display for each column. Default is 5.
+#' @param top_n Integer; the number of top unique values to display for each column. Default is 5. top_n = 0 will remove column.
 #'
 #' @return None. Prints the data dictionary.
 #' @importFrom rlang expr_label
@@ -23,7 +23,17 @@
 #' # Print the data dictionary for the iris dataset
 #' data_dictionary(iris, descriptions = desc, top_n = 1)
 
-data_dictionary <- function(data, data_title = NULL, descriptions = NULL, show_na = TRUE, top_n = 5) {
+data_dictionary <- function(data, data_title = NULL, descriptions = NULL, top_n = 5, hide = NULL) {
+  # hide = c("Type","NA_Count","NA_Percentage","N_Unique", "top_123")
+
+  # Lowercase columns to hide
+  hide <- tolower(hide)
+
+  # Anything that starts with "top_" will be considered "top_n" (top_5...)
+  if (any(grepl("top_", hide))) {
+    hide <- c(hide,"top_n")
+  }
+
   # If no title is provided use dataframe name
   if (is.null(data_title)) {
     data_title <- deparse(substitute(data))
@@ -38,39 +48,62 @@ data_dictionary <- function(data, data_title = NULL, descriptions = NULL, show_n
   # Create the data dictionary table
   dict_table <- data.frame(
     "Column" = names(data),
-    "Type" = sapply(data, class),
     row.names = NULL
   )
 
+  # Add Type column
+  if (!"type" %in% hide) {
+    dict_table$Type = sapply(data, function(x) class(x)[1])
+  }
+
   # If descriptions are provided, match them to column names
-  if (!is.null(descriptions)) {
+  if (!is.null(descriptions) && (!"description" %in% hide)) {
     dict_table$Description <- ""
     for (col in descriptions$Variable) {
       dict_table$Description[dict_table$Column == col] <- descriptions[descriptions$Variable == col, "Description"]
     }
   }
 
-  # NA count and percentage
-  if (show_na) {
+  # Add NA_Count column
+  if (!"na_count" %in% hide) {
     nas <- colSums(is.na(data))
-    nas_pct <- sprintf("%.2f%%", nas / num_rows * 100)
     dict_table$NA_Count <- nas
+  }
+
+  # Add NA_Percentage column
+  if (!"na_percentage" %in% hide) {
+    nas_pct <- sapply(colSums(is.na(data)) / num_rows * 100, function(x) {
+      if (x == 0) {
+        return("")  # Leave empty for 0%
+      } else {
+        return(sprintf("%.0f%%", x))
+      }
+    })
     dict_table$NA_Percentage <- nas_pct
   }
 
-  # Number of unique values
-  num_unique <- sapply(data, function(x) length(unique(x)))
-  dict_table$N_Unique <- num_unique
+  # Add N_Unique column
+  if (!"n_unique" %in% hide) {
+    num_unique <- sapply(data, function(x) length(unique(x)))
+    dict_table$N_Unique <- num_unique
+  }
 
-  # Get top n unique values for each column
-  top_n_values <- sapply(data, function(col) {
-    unique_vals <- unique(col)
-    top_vals <- head(sort(table(col), decreasing = TRUE), top_n)
-    paste(names(top_vals), collapse = ", ")
-  })
+  # Add Top_n column
+  if ((top_n > 0) && (!"top_n" %in% hide)) {
+    # Get top n unique values for each column
+    top_n_values <- sapply(data, function(col) {
+      # empty string for geometry columns
+      if (any(grepl("sfc", class(col)))) {
+        return("")
+      }
+      unique_vals <- unique(col)
+      top_vals <- head(sort(table(col), decreasing = TRUE), top_n)
+      paste(names(top_vals), collapse = ", ")
+    })
 
-  # Add the top n unique values as a new column
-  dict_table[[paste0("Top_", top_n)]] <- top_n_values
+    # Add the top n unique values as a new column
+    dict_table[[paste0("Top_", top_n)]] <- top_n_values
+  }
 
   # Format row numbers with commas
   rows_text <- format(num_rows, big.mark = ",", scientific = F)

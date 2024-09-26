@@ -4,15 +4,14 @@
 \alias{data_description}
 \title{data_description}
 \usage{
-data_description(data, variable = NULL, description = NULL)
+data_description(data, var_desc = NULL)
 }
 \arguments{
 \item{data}{A dataframe whose variables are to be described.}
 
-\item{variable}{A vector of variable names from the dataframe. If provided, descriptions will be updated for these variables.}
-
-\item{description}{A vector of descriptions. If `variable` is not provided, descriptions will be applied sequentially to the first N columns.
-If `variable` is provided, descriptions will be applied to the corresponding variables.}
+\item{var_desc}{A vector of variable names from the dataframe. If provided, descriptions will be updated for these variables.
+##### edit docs #### description A vector of descriptions. If `variable` is not provided, descriptions will be applied sequentially to the first N columns.
+     If `variable` is provided, descriptions will be applied to the corresponding variables.}
 }
 \value{
 A dataframe with the variables and their descriptions.
@@ -31,12 +30,12 @@ descriptions <- data_description(iris)
 print(descriptions)
 
 # Update descriptions for the first two columns
-descriptions <- data_description(iris, description = c("Length of sepals", "Width of sepals"))
+descriptions <- data_description(iris, var_desc = c("Length of sepals", "Width of sepals"))
 print(descriptions)
 
 # Update descriptions for specific variables
 descriptions <- data_description(iris,
-                                 variable = c("Sepal.Length", "Species"),
-                                 description = c("Length of sepals", "Species of the flower"))
+                                 var_desc = c("Sepal.Length" = "Length of sepals",
+                                              "Species" = "Species of the flower"))
 print(descriptions)
 }

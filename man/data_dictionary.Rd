@@ -8,8 +8,8 @@ data_dictionary(
   data,
   data_title = NULL,
   descriptions = NULL,
-  show_na = TRUE,
-  top_n = 5
+  top_n = 5,
+  hide = NULL
 )
 }
 \arguments{
@@ -19,9 +19,9 @@ data_dictionary(
 
 \item{descriptions}{A dataframe containing descriptions of the variables. It should have at least two columns: "Variable" and "Description".}
 
-\item{show_na}{Logical; whether to display NA counts and percentages in the data dictionary. Default is `TRUE`.}
+\item{top_n}{Integer; the number of top unique values to display for each column. Default is 5. top_n = 0 will remove column.}
 
-\item{top_n}{Integer; the number of top unique values to display for each column. Default is 5.}
+\item{show_na}{Logical; whether to display NA counts and percentages in the data dictionary. Default is `TRUE`.}
 }
 \value{
 None. Prints the data dictionary.
